@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Test</title>
+	<script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+</head>
+
+<body>
+	<div class="row" style="background-color: cornsilk;">
+		<div style="margin-left: 2%;">
+			<div class="col-md-11">
+				<h2>危险化学品知识图谱</h3>
+			</div>
+			<div class="navbar-form navbar-left" role="search">
+				<div class="form-group">
+					<input type="text" class="form-control" id="search_input" placeholder="输入查询号（如 50-00-0）">
+					<button type="submit" class="btn btn-default" onclick="sendMsg()">查询</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row" style="margin-left: 1%;">
+		<div class="col-md-6" style="margin-top: 2%;">
+			<table class="table table-striped">
+				<!-- On cells (`td` or `th`) -->
+				<tr>
+					<h3>危险化学品属性显示：</h3>
+				</tr>
+				<tr>
+					<td class="danger" id="wxpmc"></td>
+					<td class="danger" id="cas"></td>
+				</tr>
+				<tr>
+					<td class="success" id="xdfzzl"></td>
+					<td class="info" id="xdmd"></td>
+				</tr>
+				<tr>
+					<td class="info" id="fzs"></td>
+					<td class="success" id="wdx"></td>
+				</tr>
+				<tr>
+					<td class="success" id="yrwd"></td>
+					<td class="info" id="bhzqy"></td>
+				</tr>
+				<tr>
+					<td class="info" id="ljwd"></td>
+					<td class="success" id="wgyxz"></td>
+				</tr>
+				<tr>
+					<td class="success" id="ljyl"></td>
+					<td class="info" id="rjx"></td>
+				</tr>
+				<tr>
+					<td class="info" id="rd"></td>
+					<td class="success" id="fd"></td>
+				</tr>
+				<tr>
+					<td class="success" id="rsr"></td>
+					<td class="info" id="xdzqmd"></td>
+				</tr>
+				<tr>
+					<td class="info" id="bzxx"></td>
+					<td class="success" id="bzsx"></td>
+				</tr>
+				<tr>
+					<td class="success" id="sd"></td>
+					<td class="info" id="LogP"></td>
+				</tr>
+				<tr>
+					<td class="info" id="yhwcf"></td>
+					<td class="success" id="ph"></td>
+				</tr>
+				<tr>
+					<td class="info" id="zyyt"></td>
+				</tr>
+			</table>
+		</div>
+		<div id="main" class="col-md-6" style="margin-top: 2%; width: 800px; height:800px"></div>
+	</div>
+</body>
+
+
+<script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+
+<script type="text/javascript">
+	let websocket = null;
+	//判断当前浏览器是否支持WebSocket
+	if('WebSocket' in window){
+		websocket = new WebSocket("ws://127.0.0.1:2333");
+	}
+	else{
+		alert('Not support websocket')
+	}
+	//连接发生错误的回调方法
+	websocket.onerror = function(){
+		console.log("error")
+	};
+	//连接成功建立的回调方法
+	websocket.onopen = function(event){
+		websocket.send('50-00-0')
+		console.log("success connection")
+	}
+	// 接收到服务器消息后的回调函数
+	websocket.onmessage = function (evt) {
+		var received_msg = JSON.parse(evt.data);
+		console.log(received_msg)
+		var msg_wxp_xz = received_msg['wxp_xz']
+		var msg_wxp_jd = received_msg['wxp_jd']
+		var msg_wxp_gx = received_msg['wxp_gx']
+
+		{
+			document.getElementById('wxpmc').innerHTML = "危险品名称: " + msg_wxp_xz['危险品名称']
+			document.getElementById('fzs').innerHTML = "分子式: " + msg_wxp_xz['分子式']
+			document.getElementById('xdfzzl').innerHTML = "相对分子质量: " + msg_wxp_xz['相对分子质量']
+			document.getElementById('cas').innerHTML = "CAS 号: " + msg_wxp_xz['CAS']
+			document.getElementById('yhwcf').innerHTML = "有害物成分: " + msg_wxp_xz['有害物成分']
+			document.getElementById('wgyxz').innerHTML = "外观与性状: " + msg_wxp_xz['外观与性状']
+			document.getElementById('ph').innerHTML = "PH值: " + msg_wxp_xz['PH值']
+			document.getElementById('rd').innerHTML = "熔点: " + msg_wxp_xz['熔点']
+			document.getElementById('fd').innerHTML = "沸点: " + msg_wxp_xz['沸点']
+			document.getElementById('xdmd').innerHTML = "相对密度: " + msg_wxp_xz['相对密度']
+			document.getElementById('xdzqmd').innerHTML = "相对蒸汽密度: " + msg_wxp_xz['相对蒸汽密度']
+			document.getElementById('bhzqy').innerHTML = "饱和蒸汽压: " + msg_wxp_xz['饱和蒸汽压']
+			document.getElementById('ljwd').innerHTML = "临界温度: " + msg_wxp_xz['临界温度']
+			document.getElementById('ljyl').innerHTML = "临界压力: 6.81" + msg_wxp_xz['临界压力']
+			document.getElementById('LogP').innerHTML = "LogP: " + msg_wxp_xz['LogP']
+			document.getElementById('sd').innerHTML = "闪点: " + msg_wxp_xz['闪点']
+			document.getElementById('yrwd').innerHTML = "引燃温度: " + msg_wxp_xz['引燃温度']
+			document.getElementById('rsr').innerHTML = "燃烧热: " + msg_wxp_xz['燃烧热']
+			document.getElementById('bzxx').innerHTML = "爆炸下限: " + msg_wxp_xz['爆炸下限']
+			document.getElementById('bzsx').innerHTML = "爆炸上限: : " + msg_wxp_xz['爆炸上限']
+			document.getElementById('rjx').innerHTML = "溶解性: " + msg_wxp_xz['溶解性']
+			document.getElementById('zyyt').innerHTML = "主要用途: " + msg_wxp_xz['主要用途']
+			document.getElementById('wdx').innerHTML = "稳定性: " + msg_wxp_xz['稳定性']
+		}
+
+		require.config({
+			paths: {
+				echarts: 'http://echarts.baidu.com/build/dist'
+			}
+		});
+		require(["echarts", "echarts/chart/force"], function (ec) {
+			var myChart = ec.init(document.getElementById('main'))
+			var option = {
+				tooltip: {
+					trigger: 'item',
+					formatter: function (params) {
+
+						if (params.data.category != undefined) {
+							return params.data.label;
+						} else {
+							return params.data.flow;
+						}
+
+					},
+				},
+				legend: {
+					x: 'left',
+					data: ['危险品', '索引', '侵入途径', '健康危害', '环境危害',
+						'皮肤接触', '眼睛接触', '吸入', '食入', '有害燃烧产物', '灭火方法',
+						'灭火注意事项及措施', '应急行动', '操作注意事项', '储存注意事项',
+						'禁配品', '避免接触条件', '风险事件', '风险产物']
+				},
+				series: [{
+					type: 'force',
+
+					itemStyle: {
+						normal: {
+							label: {
+								show: true,
+							},
+							nodeStyle: {
+								brushType: 'both',
+								borderColor: 'rgba(255,215,0,0.4)',
+								borderWidth: 1
+
+							}
+						}
+					},
+
+					categories: [{ name: '危险品' }, { name: '索引' }, { name: '侵入途径' }, { name: '健康危害' },
+					{ name: '环境危害' }, { name: '皮肤接触' }, { name: '眼睛接触' }, { name: '吸入' },
+					{ name: '食入' }, { name: '有害燃烧产物' }, { name: '灭火方法' }, { name: '灭火注意事项及措施' },
+					{ name: '应急行动' }, { name: '操作注意事项' }, { name: '储存注意事项' }, { name: '禁配品' },
+					{ name: '避免接触条件' }, { name: '风险事件' }, { name: '风险产物' }],
+
+					useWorker: true, //是否在浏览器支持 web worker 的时候把布局计算放入 web worker 中
+					focusNodeAdjacency: true,  //突出相关
+					gravity: 10,  //向心力系数，系数越大则节点越往中心靠拢
+					scaling: 3,	 //布局缩放系数，并不完全精确, 效果跟布局大小类似，越小越紧密
+					roam: true, //	是否开启滚轮缩放和拖拽漫游，默认为false（关闭），其他有效输入为true（开启），'scale'（仅开启滚轮缩放），'move'（仅开启拖拽漫游）
+					large: false,
+					linkSymbol: 'arrow',
+
+					data: [
+					],
+					links: [
+					],
+				}]
+			};
+
+			{
+				option.series[0].data = msg_wxp_jd
+				option.series[0].links = msg_wxp_gx
+				myChart.setOption(option)
+			}
+
+			var linkList = option.series[0].links;
+			for (var i in linkList) {
+				let linkObj = linkList[i];
+				linkObj.itemStyle = {
+					normal: {
+						// text: linkObj.value,
+						color: '#cccccc',
+						brushType: 'stroke',
+						//shadowColor: '#cccccc',
+						textPosition: 'inside',
+						textFont: 'normal 16px 宋体',
+						strokeColor: '#cccccc'
+					}
+				};
+			}
+
+			myChart.setOption(option);
+			function contains(arrays, obj) {
+				var i = arrays.length;
+				while (i--) {
+					if (arrays[i].name == obj) {
+						return i;
+					}
+				}
+				return -1;
+			}
+
+			var ecConfig = require('echarts/config');
+			function openOrFold(param) {
+				var option = myChart.getOption();
+				var nodesOption = option.series[0].nodes;
+				var linksOption = option.series[0].links;
+				var data = param.data;
+				var linksNodes = [];
+
+				var categoryLength = option.series[0].categories.length;
+
+				if (data.category == (categoryLength - 1)) {
+					// alert(data.label);
+					return;
+				}
+
+				if (data != null && data != undefined) {
+					if (data.flag) {
+
+						for (var m in linksOption) {
+
+							if (linksOption[m].target == data.id) {
+								linksNodes.push(linksOption[m].source);
+							}
+						}
+						if (linksNodes != null && linksNodes != undefined) {
+							for (var p in linksNodes) {
+								let index = contains(nodesOption, linksNodes[p]);
+								nodesOption[index].ignore = false;
+								nodesOption[index].flag = true;
+							}
+						}
+
+						nodesOption[contains(nodesOption, data.id)].flag = false;
+						myChart.setOption(option);
+					} else {
+						
+						for (var m in linksOption) {
+
+							if (linksOption[m].target == data.id) {
+								linksNodes.push(linksOption[m].source);
+							}
+							if (linksNodes != null && linksNodes != undefined) {
+
+								for (var n in linksNodes) {
+									if (linksOption[m].target == linksNodes[n]) {
+										linksNodes.push(linksOption[m].source);
+									}
+								}
+
+							}
+						}
+
+						if (linksNodes != null && linksNodes != undefined) {
+							for (var p in linksNodes) {
+								let index = contains(nodesOption, linksNodes[p]);
+								nodesOption[index].ignore = true;
+								nodesOption[index].flag = true;
+							}
+						}
+						nodesOption[contains(nodesOption, data.id)].flag = true;
+						myChart.setOption(option);
+					}
+				}
+			}
+			myChart.on(ecConfig.EVENT.CLICK, openOrFold);
+		});
+	};
+	// 连接关闭后的回调函数
+	websocket.onclose = function () {
+		// 关闭 websocket
+		// alert("连接已关闭...");
+		console.log("onclose")
+	};
+	//监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+	window.onbeforeunload = function(){
+	    // websocket.close();
+		console.log("close")
+	}
+	//关闭连接
+	function closeWebSocket(){
+	    // websocket.close();
+		console.log("close")
+	}
+	//发送消息
+	function sendMsg(){
+		let message = document.getElementById('search_input').value;
+		if(message == '') {
+			alert("请输入正确CAS号")
+		}
+		websocket.send(message);
+		// document.getElementById('search_input').value = '';
+	}
+</script>
+
+
+<script type="text/javascript">
+
+
+</script>
+
+</html>

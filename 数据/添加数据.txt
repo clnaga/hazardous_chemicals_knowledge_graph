@@ -1,0 +1,205 @@
+//drop index on :危险品(name);
+//create index on :危险品(name);
+
+load csv from "file:/index.csv" as line
+merge (:索引 {name: line[0]});
+
+load csv from "file:/index_relations.csv" as line
+match (a:索引), (b:索引)
+where a.name=line[1] and b.name=line[0]
+merge (a)-[:属于]->(b);
+
+load csv with headers from "file:/index/jyztbzwxdwzhwp.csv" as row
+match (a:索引)
+where a.name='具有整体爆炸危险的物质和物品'
+merge (b:危险品 {name: row.CAS})
+merge (b)-[:属于]->(a);
+
+load csv with headers from "file:/index/yrqt.csv" as row
+match (a:索引)
+where a.name='易燃气体'
+merge (b:危险品 {name: row.CAS})
+merge (b)-[:属于]->(a);
+
+load csv with headers from "file:/index/brqt.csv" as row
+match (a:索引)
+where a.name='不燃气体'
+merge (b:危险品 {name: row.CAS})
+merge (b)-[:属于]->(a);
+
+load csv with headers from "file:/index/ydqt.csv" as row
+match (a:索引)
+where a.name='有毒气体'
+merge (b:危险品 {name: row.CAS})
+merge (b)-[:属于]->(a);
+
+load csv with headers from "file:/index/dsdyq.csv" as row
+match (a:索引)
+where a.name='低闪点液体'
+merge (b:危险品 {name: row.CAS})
+merge (b)-[:属于]->(a);
+
+load csv with headers from "file:/index/zsdyq.csv" as row
+match (a:索引)
+where a.name='中闪点液体'
+merge (b:危险品 {name: row.CAS})
+merge (b)-[:属于]->(a);
+
+load csv with headers from "file:/index/gsdyq.csv" as row
+match (a:索引)
+where a.name='高闪点液体'
+merge (b:危险品 {name: row.CAS})
+merge (b)-[:属于]->(a);
+
+load csv with headers from "file:/index/yrgt.csv" as row
+match (a:索引)
+where a.name='易燃固体'
+merge (b:危险品 {name: row.CAS})
+merge (b)-[:属于]->(a);
+
+load csv with headers from "file:/index/zrwp.csv" as row
+match (a:索引)
+where a.name='自燃物品'
+merge (b:危险品 {name: row.CAS})
+merge (b)-[:属于]->(a);
+
+load csv with headers from "file:/index/ysyrwp.csv" as row
+match (a:索引)
+where a.name='遇湿易燃物品'
+merge (b:危险品 {name: row.CAS})
+merge (b)-[:属于]->(a);
+
+load csv with headers from "file:/index/yhj.csv" as row
+match (a:索引)
+where a.name='氧化剂'
+merge (b:危险品 {name: row.CAS})
+merge (b)-[:属于]->(a);
+
+load csv with headers from "file:/index/yjgyhw.csv" as row
+match (a:索引)
+where a.name='有机过氧化物'
+merge (b:危险品 {name: row.CAS})
+merge (b)-[:属于]->(a);
+
+load csv with headers from "file:/index/dhp.csv" as row
+match (a:索引)
+where a.name='毒害品'
+merge (b:危险品 {name: row.CAS})
+merge (b)-[:属于]->(a);
+
+load csv with headers from "file:/index/sxfsp.csv" as row
+match (a:索引)
+where a.name='酸性腐蚀品'
+merge (b:危险品 {name: row.CAS})
+merge (b)-[:属于]->(a);
+
+load csv with headers from "file:/index/zxfsp.csv" as row
+match (a:索引)
+where a.name='碱性腐蚀品'
+merge (b:危险品 {name: row.CAS})
+merge (b)-[:属于]->(a);
+
+load csv with headers from "file:/index/qtfsp.csv" as row
+match (a:索引)
+where a.name='其他腐蚀品'
+merge (b:危险品 {name: row.CAS})
+merge (b)-[:属于]->(a);
+
+load csv with headers from "file:/index/cxwp.csv" as row
+match (a:索引)
+where a.name='磁性物品'
+merge (b:危险品 {name: row.CAS})
+merge (b)-[:属于]->(a);
+
+load csv with headers from "file:/index/qtgddwp.csv" as row
+match (a:索引)
+where a.name='其他规定的物品'
+merge (b:危险品 {name: row.CAS})
+merge (b)-[:属于]->(a);
+
+load csv with headers from "file:/data/base.csv" as row
+match (n:危险品 {name: row.CAS})
+set n.危险品名称=row.危险品名称, n.分子式=row.分子式, n.相对分子质量=row.相对分子质量, n.CAS=row.CAS, n.外观与性状=row.外观与性状, n.PH值=row.PH值, n.熔点=row.熔点, n.沸点=row.沸点, n.相对密度=row.相对密度, n.相对蒸汽密度=row.相对蒸汽密度, n.饱和蒸汽压=row.饱和蒸汽压, n.临界温度=row.临界温度, n.临界压力=row.临界压力, n.logP=row.logP, n.闪点=row.闪点, n.引燃温度=row.引燃温度, n.燃烧热=row.燃烧热, n.爆炸下限=row.爆炸下限, n.爆炸上限=row.爆炸上限, n.溶解性=row.溶解性, n.主要用途=row.主要用途, n.稳定性=row.稳定性;
+
+load csv with headers from "file:/data/qrtj.csv" as row
+match (b:危险品 {name: row.CAS})
+merge (a:侵入途径 {name: row.侵入途径})
+merge (b)-[r:危害]->(a);
+
+load csv with headers from "file:/data/jkwh.csv" as row
+match (b:危险品 {name: row.CAS})
+merge (a:健康危害 {name: row.健康危害})
+merge (b)-[r:危害]->(a);
+
+load csv with headers from "file:/data/hjwh.csv" as row
+match (b:危险品 {name: row.CAS})
+merge (a:环境危害 {name: row.环境危害})
+merge (b)-[r:危害]->(a);
+
+load csv with headers from "file:/data/pfjc.csv" as row
+match (b:危险品 {name: row.CAS})
+merge (a:皮肤接触 {name: row.皮肤接触})
+merge (b)-[r:急救措施]->(a);
+
+load csv with headers from "file:/data/yjjc.csv" as row
+match (b:危险品 {name: row.CAS})
+merge (a:眼睛接触 {name: row.眼睛接触})
+merge (b)-[r:急救措施]->(a);
+
+load csv with headers from "file:/data/xr.csv" as row
+match (b:危险品 {name: row.CAS})
+merge (a:吸入 {name: row.吸入})
+merge (b)-[r:急救措施]->(a);
+
+load csv with headers from "file:/data/sr.csv" as row
+match (b:危险品 {name: row.CAS})
+merge (a:食入 {name: row.食入})
+merge (b)-[r:急救措施]->(a);
+
+load csv with headers from "file:/data/yhrscw.csv" as row
+match (b:危险品 {name: row.CAS})
+merge (a:有害燃烧产物 {name: row.有害燃烧产物})
+merge (b)-[r:消防措施]->(a);
+
+load csv with headers from "file:/data/mhff.csv" as row
+match (b:危险品 {name: row.CAS})
+merge (a:灭火方法 {name: row.灭火方法})
+merge (b)-[r:消防措施]->(a);
+
+load csv with headers from "file:/data/mhzycs.csv" as row
+match (b:危险品 {name: row.CAS})
+merge (a:灭火注意事项及措施 {name: row.灭火注意事项及措施})
+merge (b)-[r:消防措施]->(a);
+
+load csv with headers from "file:/data/yjxd.csv" as row
+match (b:危险品 {name: row.CAS})
+merge (a:应急行动 {name: row.应急行动})
+merge (b)-[r:泄露应急处理]->(a);
+
+load csv with headers from "file:/data/czzysx.csv" as row
+match (b:危险品 {name: row.CAS})
+merge (a:操作注意事项 {name: row.操作注意事项})
+merge (b)-[r:操作处置与储存]->(a);
+
+load csv with headers from "file:/data/cczysx.csv" as row
+match (b:危险品 {name: row.CAS})
+merge (a:储存注意事项 {name: row.储存注意事项})
+merge (b)-[r:操作处置与储存]->(a);
+
+load csv with headers from "file:/data/jpw.csv" as row
+match (b:危险品 {name: row.CAS})
+merge (a:禁配物 {name: row.禁配物})
+merge (b)-[r:反应性]->(a);
+
+load csv with headers from "file:/data/bmjctj.csv" as row
+match (b:危险品 {name: row.CAS})
+merge (a:避免接触条件 {name: row.避免接触条件})
+merge (b)-[r:反应性]->(a);
+
+load csv with headers from "file:/data/fxsj.csv" as row
+match (b:危险品 {name: row.CAS})
+merge (b)-[r:风险条件 {name: row.条件}]->(:风险事件 {name: row.风险});
+
+load csv with headers from "file:/data/fxcw.csv" as row
+match (b:危险品 {name: row.CAS})
+merge (b)-[r:风险条件 {name: row.条件}]->(:风险事件 {name: row.结果});
