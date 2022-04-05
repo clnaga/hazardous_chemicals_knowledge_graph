@@ -202,4 +202,4 @@ merge (b)-[r:风险条件 {name: row.条件}]->(:风险事件 {name: row.风险}
 
 load csv with headers from "file:/data/fxcw.csv" as row
 match (b:危险品 {name: row.CAS})
-merge (b)-[r:风险条件 {name: row.条件}]->(:风险事件 {name: row.结果});
+merge (b)-[r:风险条件 {name: row.条件}]->(:风险产物 {name: row.结果});
